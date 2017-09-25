@@ -1,4 +1,4 @@
-from . import app
+from .typed_mounter import TypedMounter
 
-__all__ = ['app']
+__all__ = [TypedMounter.__name__]
 
