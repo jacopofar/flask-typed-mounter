@@ -18,12 +18,13 @@ class TypedMounter(object):
         <style>
         body {
             background-color: aliceblue;
+            font-family: sans-serif;
         }
         table.type-hints-{{ function_name }} * {
             border: 1px solid black;
             padding: 1ex;
-            font-family: sans-serif;
-            background-color: white;Screen Shot 2017-09-26 at 16.33.06
+            
+            background-color:white;
         }
         </style>
         </head>

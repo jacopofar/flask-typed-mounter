@@ -19,6 +19,17 @@ See `example.py` for a complete example, in short:
 
 this will expose your multiplier function at `/mul`, with the result that a POST of a JSON will be validated against type hints and give a JSON answer or nice error message if not matching. A GET for that endpoint will show the rendered pydoc string and the type hints.
 
+Type checking (based on Python 3.6 typing):
+
+.. image:: error_check.png
+
+Documentation:
+
 .. image:: doc_screenshot.png
+
+Correct call:
+.. image:: no_errors.png
+
+
 
 A customized doc template can be passed as `doc_html_template` when instantiating the server and documentation endpoint can be disabled on single functions by passing `auto_document=False`
