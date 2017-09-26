@@ -2,7 +2,7 @@ from typing import List
 
 from flask import Flask
 
-from checker import TypedMounter
+from flask_typed_mounter import TypedMounter
 
 
 app = Flask(__name__)

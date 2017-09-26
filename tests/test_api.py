@@ -3,7 +3,7 @@ import unittest
 
 from flask import Flask
 
-from checker import TypedMounter
+from flask_typed_mounter import TypedMounter
 
 
 class AppTest(unittest.TestCase):
