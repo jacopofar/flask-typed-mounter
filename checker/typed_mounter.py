@@ -4,22 +4,26 @@ import json
 from functools import wraps
 from textwrap import dedent
 
-from flask import Response, render_template, request
+from flask import Response, request
 from jinja2 import Environment
 
 from runtime_typecheck import check_args, DetailedTypeError
 
 
 class TypedMounter(object):
-    DOC_HTML='''
+    DEFAULT_DOC_HTML='''
         <html>
         <head>
         <title>{{ function_name }}</title>
         <style>
-        th, td {
+        body {
+            background-color: aliceblue;
+        }
+        table.type-hints-{{ function_name }} * {
             border: 1px solid black;
             padding: 1ex;
             font-family: sans-serif;
+            background-color: white;Screen Shot 2017-09-26 at 16.33.06
         }
         </style>
         </head>
@@ -27,7 +31,7 @@ class TypedMounter(object):
         <h1>{{ function_name }}</h1>
         {{ doc_html|safe }}
         <p>Type hints</p>
-        <table>
+        <table class="type-hints-{{ function_name }}">
           <colgroup span="4"></colgroup>
           <tr>
             <th>Parameter</th>
@@ -49,8 +53,9 @@ class TypedMounter(object):
         </html>
     '''
 
-    def __init__(self, app=None):
+    def __init__(self, app=None, doc_html_template=DEFAULT_DOC_HTML):
         self._app = app
+        self.doc_html = doc_html_template
 
     def init_app(self, app):
         self._app = app
@@ -63,12 +68,12 @@ class TypedMounter(object):
                 raise ValueError(f'currently the function can be mounted only to a POST verb, was called with methods={options["methods"]}')
 
             def actual_decorator(fun):
-                if options.get('auto_document', False):
+                if options.get('auto_document', True):
                     document_options = options.copy()
                     document_options['methods'] = ['GET']
                     document_options.pop('auto_document', None)
 
-                    @self._app.route(rule, **document_options)
+                    @self._app.route(rule, **document_options, endpoint=f'doc_{rule}')
                     def document():
                         doc_html = publish_parts(dedent(fun.__doc__), writer_name='html')['html_body']
                         parameter_descriptions = []
@@ -79,7 +84,7 @@ class TypedMounter(object):
                                 'default_value': '' if attributes.default == inspect._empty else attributes.default
                             })
                         return Environment(autoescape=True)\
-                            .from_string(dedent(self.DOC_HTML))\
+                            .from_string(dedent(self.doc_html))\
                             .render(doc_html=doc_html, parameters=parameter_descriptions, function_name=fun.__name__)
 
 
@@ -93,7 +98,7 @@ class TypedMounter(object):
                 api_options.pop('auto_document', None)
 
                 @wraps(fun)
-                @self._app.route(rule, endpoint=rule, **api_options)
+                @self._app.route(rule, endpoint=f'api_{rule}', **api_options)
                 def service():
                     try:
                         with_type_checking = check_args(fun)

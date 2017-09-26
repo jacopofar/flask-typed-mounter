@@ -12,11 +12,11 @@ class AppTest(unittest.TestCase):
         self.tm = TypedMounter(app)
         self.app = app.test_client()
 
-        @self.tm.attach_endpoint('/mul', methods=['POST'])
+        @self.tm.attach_endpoint('/mul', methods=['POST'], auto_document=False)
         def multiplier(val1: int, val2: int = 5):
             return val1 * val2
 
-        @self.tm.attach_endpoint('/mul_two', methods=['POST'], auto_document=True)
+        @self.tm.attach_endpoint('/mul_two', methods=['POST'])
         def multiplier_with_doc(val1: int, val2: int = 5):
             '''
             SPECIAL_STRING_FROM_DOCUMENTATION
