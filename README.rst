@@ -5,9 +5,11 @@
 Flask typed mounter
 ###################
 
+
+Exposes a plain Python function as an HTTP endpoint using Flask, performs type checking bewteen HTTP request and Python 3.6 type hints to give the client a clear error before calling the function. A GET request retrieves the documentation and type hints for that function
+
 Work in progress, don't hesitate forking/asking/suggesting
 
-Exposes a plain Python function as an HTTP endpoint using Flask, performs type checking on call content to give the client a clear error before calling the function. A GET request retrieves the documentation and type hints for that function
 
 See `example.py` for a complete example, in short:
 
