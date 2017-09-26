@@ -2,11 +2,19 @@
 
 from distutils.core import setup
 
-setup(name='TBD Checker',
+setup(name='flask-typed-mounter',
       version='0.0',
-      description='TBD - Flask mounter and type checker',
+      description='Decorator to mount a function to a Flask endpoint',
+      long_description='''one-line decorator to mount a function to a Flask endpoint which will perform type checking on the call parameters and show the pydoc and a table with the parameters inferred from Python 3.6 type hinting''',
       author='Jacopo Farina',
       author_email='jacopo1.farina@gmail.com',
-      # url='https://www.python.org/sigs/distutils-sig/',
-      packages=['checker'],
-     )
+      license='MIT',
+      url='https://github.com/jacopofar/flask-typed-mounter',
+      packages=['flask-typed-mounter'],
+      classifiers=['Development Status :: 3 - Alpha',
+                   'License :: OSI Approved :: MIT License',
+                   'Programming Language :: Python :: 3.6'],
+      keywords='flask type hinting api mounter',
+      install_requires=['flask', 'runtime_typecheck'],
+      python_requires='>=3.6'
+      )
