@@ -24,15 +24,14 @@ this will expose your multiplier function at `/mul`, with the result that a POST
 Type checking (based on Python 3.6 typing):
 
 .. image:: error_check.png
-    :scale: 60%
 
 Documentation:
 
 .. image:: doc_screenshot.png
 
 Correct call:
+
 .. image:: no_errors.png
-:scale: 60%
 
 
 A customized doc template can be passed as `doc_html_template` when instantiating the server and documentation endpoint can be disabled on single functions by passing `auto_document=False`
