@@ -20,26 +20,39 @@ class TypedMounter(object):
             background-color: aliceblue;
             font-family: sans-serif;
         }
-        table.type-hints-{{ function_name }} * {
-            border: 1px solid black;
-            padding: 1ex;
-            
-            background-color:white;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid lightgray;
+            color: rgba(89, 96, 105, 1.0);
+        }
+        th {
+            color: rgba(36, 41, 46, 1.0);
+            background: rgba(209, 230, 254, 0.7);
+        }
+        .function {
+            padding: 10px;
+            background-color: rgba(95, 183, 96, 1.0);
+            border-radius: 5px;
+            color: white;
+            display: inline-block;
         }
         </style>
         </head>
         <body>
-        <h1>{{ function_name }}</h1>
-        {{ doc_html|safe }}
-        <p>Type hints</p>
+        <h1 class="function">{{ function_name }}</h1>
+        <div class="doc">{{ doc_html|safe }}</div>
+        <h4>Type Hints:</h4>
         <table class="type-hints-{{ function_name }}">
-          <colgroup span="4"></colgroup>
           <tr>
             <th>Parameter</th>
             <th>Type</th>
             <th>Default value</th>
           </tr>
-          
             {% for p in parameters %}
                 <tr>
                     <td>{{ p.name }}</td>
@@ -48,8 +61,6 @@ class TypedMounter(object):
                 </tr>
             {% endfor %}
         </table>
-
-       
         </body>
         </html>
     '''
