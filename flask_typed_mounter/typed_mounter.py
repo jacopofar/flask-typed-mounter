@@ -2,7 +2,9 @@ from docutils.core import publish_parts
 import inspect
 import json
 from functools import wraps
+import sys
 from textwrap import dedent
+import traceback
 
 from flask import Response, request
 from jinja2 import Environment
@@ -112,8 +114,9 @@ class TypedMounter(object):
                 @wraps(fun)
                 @self._app.route(rule, endpoint=f'api_{rule}', **api_options)
                 def service():
+
+                    with_type_checking = check_args(fun)
                     try:
-                        with_type_checking = check_args(fun)
                         js = json.dumps(with_type_checking(**request.get_json()))
                         resp = Response(js, status=200, mimetype='application/json')
                         return resp
@@ -129,6 +132,11 @@ class TypedMounter(object):
                                 'message': issue.generic_message
                             } for issue in dte.issues]
                         }), status=400, mimetype='application/json')
+
+                    except:
+                        exc = sys.exc_info()
+                        traceback.print_exc(file=sys.stdout)
+                        return Response(str(f'Error in function {fun.__name__}\n {exc[0]}: {exc[1]}'), status=400)
 
                 return service
         return actual_decorator

@@ -20,4 +20,6 @@ def multiplier(val1: int, names:List[str], val2: int = 5):
     :param val2: another number, defaults to 5
     :return: the product of the two values
     """
+    if val2 ==7:
+        print(23 / 0)
     return names[val1] * val2
