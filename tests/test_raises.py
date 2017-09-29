@@ -12,6 +12,12 @@ class RaisesTest(unittest.TestCase):
             def multiplier(val1: int, val2: int = 5):
                 return val1 * val2
 
+    def test_only_post_is_accepted(self):
+        with self.assertRaises(ValueError):
+            @self.tm.attach_endpoint('/mul_three', methods=['POST', 'PUT'])
+            def foo(val1: int, val2: int = 5):
+                return val1 * val2
+
 
 if __name__ == '__main__':
     unittest.main()

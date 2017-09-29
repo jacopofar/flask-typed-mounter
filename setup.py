@@ -15,6 +15,6 @@ setup(name='flask_typed_mounter',
                    'License :: OSI Approved :: MIT License',
                    'Programming Language :: Python :: 3.6'],
       keywords='flask type hinting api mounter',
-      install_requires=['flask', 'runtime_typecheck','docutils'],
+      install_requires=['flask', 'runtime_typecheck', 'docutils'],
       python_requires='>=3.6'
       )

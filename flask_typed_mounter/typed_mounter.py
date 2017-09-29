@@ -1,13 +1,16 @@
-from docutils.core import publish_parts
+from functools import wraps
 import inspect
 import json
-from functools import wraps
+from pathlib import Path
 import sys
+import tempfile
 from textwrap import dedent
 import traceback
 
+from docutils.core import publish_parts
 from flask import Response, request
 from jinja2 import Environment
+from werkzeug.utils import secure_filename
 
 from runtime_typecheck import check_args, DetailedTypeError
 
@@ -117,10 +120,31 @@ class TypedMounter(object):
 
                     with_type_checking = check_args(fun)
                     try:
-                        js = json.dumps(with_type_checking(**request.get_json()))
-                        resp = Response(js, status=200, mimetype='application/json')
-                        return resp
+                        # JSON POST, this is most of us want
+                        if request.get_json() is not None:
+                            js = json.dumps(with_type_checking(**request.get_json()))
+                            resp = Response(js, status=200, mimetype='application/json')
+                            return resp
 
+                        # forms: no types, nor structure
+                        # A simple dictionary where all values are strings, not very useful but still provided
+                        # Since the input is flat, the desired output is likely plain text too
+                        if len(request.values) > 0:
+                            form_params = {k: v for k, v in request.values.items()}
+                            # now add the files, if any, to the argument dictionary
+                            # presenting them as pathlib.Path instances
+                            # TODO let the user define limits and checkers on files
+                            dir_for_request = None
+                            for arg_name, file in request.files:
+                                if dir_for_request is None:
+                                    dir_for_request = Path(tempfile.gettempdir())
+                                path = dir_for_request / secure_filename(file.filename)
+                                file.save(path)
+                                form_params[arg_name] = path
+                            txt_response = with_type_checking(**form_params)
+                            resp = Response(txt_response, status=200, mimetype='text/plain')
+                            return resp
+                        return Response(f'Unknown request type. Mimetype was {request.mimetype}', status=400)
                     except DetailedTypeError as dte:
                         return Response(json.dumps({
                             "error": "invalid types",
