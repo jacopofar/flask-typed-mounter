@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='flask_typed_mounter',
-      version='0.1.1',
+      version='0.1.2',
       description='Decorator to mount a function to a Flask endpoint',
       long_description='''one-line decorator to mount a function to a Flask endpoint which will perform type checking on the call parameters and show the pydoc and a table with the parameters inferred from Python 3.6 type hinting''',
       author='Jacopo Farina',
@@ -15,6 +15,6 @@ setup(name='flask_typed_mounter',
                    'License :: OSI Approved :: MIT License',
                    'Programming Language :: Python :: 3.6'],
       keywords='flask type hinting api mounter',
-      install_requires=['flask', 'runtime_typecheck'],
+      install_requires=['flask', 'runtime_typecheck','docutils'],
       python_requires='>=3.6'
       )
