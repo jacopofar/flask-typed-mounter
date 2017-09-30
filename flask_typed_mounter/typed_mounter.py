@@ -129,19 +129,19 @@ class TypedMounter(object):
                         # forms: no types, nor structure
                         # A simple dictionary where all values are strings, not very useful but still provided
                         # Since the input is flat, the desired output is likely plain text too
-                        if len(request.values) > 0:
+                        if len(request.values) + len(request.files) > 0:
                             form_params = {k: v for k, v in request.values.items()}
                             # now add the files, if any, to the argument dictionary
                             # presenting them as pathlib.Path instances
                             # TODO let the user define limits and checkers on files
                             dir_for_request = None
-                            for arg_name, file in request.files:
+                            for arg_name, file in request.files.items():
                                 if dir_for_request is None:
                                     dir_for_request = Path(tempfile.gettempdir())
                                 path = dir_for_request / secure_filename(file.filename)
-                                file.save(path)
+                                file.save(str(path))
                                 form_params[arg_name] = path
-                            txt_response = with_type_checking(**form_params)
+                            txt_response = str(with_type_checking(**form_params))
                             resp = Response(txt_response, status=200, mimetype='text/plain')
                             return resp
                         return Response(f'Unknown request type. Mimetype was {request.mimetype}', status=400)
