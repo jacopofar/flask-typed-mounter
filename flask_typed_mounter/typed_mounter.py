@@ -2,6 +2,7 @@ from functools import wraps
 import inspect
 import json
 from pathlib import Path
+from shutil import rmtree
 import sys
 import tempfile
 from textwrap import dedent
@@ -16,7 +17,7 @@ from runtime_typecheck import check_args, DetailedTypeError
 
 
 class TypedMounter(object):
-    DEFAULT_DOC_HTML='''
+    DEFAULT_DOC_HTML = '''
         <html>
         <head>
         <title>{{ function_name }}</title>
@@ -85,10 +86,13 @@ class TypedMounter(object):
                 raise ValueError(f'currently the function can be mounted only to a POST verb, was called with methods={options["methods"]}')
 
             def actual_decorator(fun):
+                # keys used for the wrapper itself and not to be passed to Flask
+                own_keys = ['auto_document', 'accept_files', 'allowed_extensions']
                 if options.get('auto_document', True):
                     document_options = options.copy()
                     document_options['methods'] = ['GET']
-                    document_options.pop('auto_document', None)
+                    for key in own_keys:
+                        document_options.pop(key, None)
 
                     @self._app.route(rule, **document_options, endpoint=f'doc_{rule}')
                     def document():
@@ -105,14 +109,14 @@ class TypedMounter(object):
                             .render(doc_html=doc_html, parameters=parameter_descriptions, function_name=fun.__name__)
 
 
-            # deal with the methods
                 # see http://werkzeug.pocoo.org/docs/0.12/routing/#werkzeug.routing.Rule
                 # Example: allow automatic documentation when one calls GET or use GET
                 # parameters to call the function.
 
                 api_options = options.copy()
                 api_options['methods'] = ['POST']
-                api_options.pop('auto_document', None)
+                for key in own_keys:
+                    api_options.pop(key, None)
 
                 @wraps(fun)
                 @self._app.route(rule, endpoint=f'api_{rule}', **api_options)
@@ -120,7 +124,7 @@ class TypedMounter(object):
 
                     with_type_checking = check_args(fun)
                     try:
-                        # JSON POST, this is most of us want
+                        # JSON POST, this is what most of us want
                         if request.get_json() is not None:
                             js = json.dumps(with_type_checking(**request.get_json()))
                             resp = Response(js, status=200, mimetype='application/json')
@@ -133,16 +137,23 @@ class TypedMounter(object):
                             form_params = {k: v for k, v in request.values.items()}
                             # now add the files, if any, to the argument dictionary
                             # presenting them as pathlib.Path instances
-                            # TODO let the user define limits and checkers on files
                             dir_for_request = None
-                            for arg_name, file in request.files.items():
-                                if dir_for_request is None:
-                                    dir_for_request = Path(tempfile.gettempdir())
-                                path = dir_for_request / secure_filename(file.filename)
-                                file.save(str(path))
-                                form_params[arg_name] = path
+                            if options.get('accept_files', False):
+                                allowed_extensions = [ext.lower() for ext in options.get('allowed_extensions', [])]
+                                for arg_name, file in request.files.items():
+                                    if len(allowed_extensions) > 0:
+                                        if file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+                                            continue
+                                    if dir_for_request is None:
+                                        dir_for_request = Path(tempfile.mkdtemp())
+                                        print('TMP directory:', dir_for_request)
+                                    path = dir_for_request / secure_filename(file.filename)
+                                    file.save(str(path))
+                                    form_params[arg_name] = path
                             txt_response = str(with_type_checking(**form_params))
                             resp = Response(txt_response, status=200, mimetype='text/plain')
+                            if dir_for_request is not None:
+                                rmtree(str(dir_for_request))
                             return resp
                         return Response(f'Unknown request type. Mimetype was {request.mimetype}', status=400)
                     except DetailedTypeError as dte:

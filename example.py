@@ -26,7 +26,7 @@ def multiplier(val1: int, names:List[str], val2: int = 5) -> str:
     return names[val1] * val2
 
 
-@tm.attach_endpoint('/count_file_lines', methods=['POST'], auto_document=True)
+@tm.attach_endpoint('/count_file_lines', methods=['POST'], auto_document=True, accept_files=True)
 def multiplier(p: Path) -> int:
     """
     Count the  lines in a file
@@ -36,5 +36,4 @@ def multiplier(p: Path) -> int:
     tot = 0
     for _ in open(p):
         tot += 1
-
     return tot

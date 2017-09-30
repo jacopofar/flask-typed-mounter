@@ -2,6 +2,7 @@ import unittest
 
 from flask_typed_mounter import TypedMounter
 
+
 class RaisesTest(unittest.TestCase):
     def setUp(self):
         self.tm = TypedMounter()
