@@ -43,3 +43,9 @@ You can also accept files (which by default is not allowed) by passing the `acce
 By default there is **no limit on the size of the files** which can be uploaded. You can set it up in Flask by setting `app.config['MAX_CONTENT_LENGTH']` to the maximum number of bytes.
 
 Files will be saved in a temporary directory and be given to the function as a `pathlib.Path` object, if and only if that's the type annotation used by the function. Files are deleted after the function has been invoked, but the function itself can of course copy the contend during its execution.
+
+TODO
+####
+
+- add logging
+- add support for GET and other verbs
