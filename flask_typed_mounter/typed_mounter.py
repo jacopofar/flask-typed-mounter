@@ -1,19 +1,18 @@
-from functools import wraps
 import inspect
 import json
-from pathlib import Path
-from shutil import rmtree
 import sys
 import tempfile
-from textwrap import dedent
 import traceback
+from functools import wraps
+from pathlib import Path
+from shutil import rmtree
+from textwrap import dedent
 
 from docutils.core import publish_parts
 from flask import Response, request
 from jinja2 import Environment
+from runtime_typecheck import DetailedTypeError, check_args
 from werkzeug.utils import secure_filename
-
-from runtime_typecheck import check_args, DetailedTypeError
 
 
 class TypedMounter(object):
