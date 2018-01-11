@@ -11,12 +11,13 @@ Exposes a plain Python function as an HTTP endpoint using Flask, performs type c
 Work in progress, don't hesitate forking/asking/suggesting
 
 
-See `example.py` for a complete example, in short:
+See `example.py` for a complete example, but in short:
 
 .. code-block:: python
-    @tm.attach_endpoint('/mul', methods=['POST'], auto_document=True)
-    def multiplier(val1: int, val2: int = 5):
-        return val1 * val2
+
+   @tm.attach_endpoint('/mul', methods=['POST'], auto_document=True)
+   def multiplier(val1: int, val2: int = 5):
+       return val1 * val2
 
 
 this will expose your multiplier function at `/mul`, with the result that a POST of a JSON will be validated against type hints and give a JSON answer or nice error message if not matching. A GET for that endpoint will show the rendered pydoc string and the type hints.
