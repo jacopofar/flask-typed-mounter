@@ -1,3 +1,17 @@
+NOTE: this project is now archived
+###################################
+
+It was a fun and interesting project to build, and we learned much, but now after so many years there are more mature alternatives.
+
+You can use it if you want but I suggest looking into projects like:
+
+* Pydantic-Flask: https://github.com/bauerji/flask-pydantic
+* FastAPI: https://fastapi.tiangolo.com/
+
+they are based on the same principle as this, using Python type hints to provide validation and documentation, but much more extensive and with many more mantainers. One is still based on Flask and the other is a completely different web server with this built in.
+
+
+
 .. image:: https://travis-ci.org/jacopofar/flask-typed-mounter.svg?branch=master
     :target: https://travis-ci.org/jacopofar/flask-typed-mounter
     :alt: Travis CI badge
